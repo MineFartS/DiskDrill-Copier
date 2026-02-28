@@ -32,14 +32,16 @@ for i in relscan(SRC, DST):
     dst = get_dst(i['src'], i['dst'])
 
     print()
-    print(f'COPY={dst != None}')
-    print(f'{src=}')
-    print(f'{dst=}')
 
     if dst:
 
-        input('paused ...')
-        pass
-        #src.copy(dst)
+        print(f'{src=}')
+        print(f'{dst=}')
+
+        src.copy(dst)
+
+    else:
+
+        print(src)
 
 # ===============================================
