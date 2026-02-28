@@ -1,45 +1,56 @@
 from philh_myftp_biz.pc import Path, relscan
-from typing import Literal
+from philh_myftp_biz.terminal import warn
 
 # ===============================================
 
-SRC = Path('D:/Deleted or lost')
+SRC = Path('D:/Deleted or lost/')
 
-DST = Path('E:/__recovery/Deleted or lost')
-
-# ===============================================
-
-queue: list[dict[Literal['src', 'dst'], Path]] = []
+DST = Path('E:/__recovery/Deleted or lost/')
 
 # ===============================================
 
-def get_dst(src:Path, dst:Path):
+def get_dst(src:Path, dst:Path) -> None | Path:
 
+    # Loop while the destination path exists
     while dst.exists():
 
-        if src.size() == dst.size():
+        # If the size is the same
+        if src.size() == dst.size():        
             
+            # Output None
             return
 
-        dst = dst.sibling(f'{dst.name()} (1).{dst.ext()}')
+        # If the size is different
+        else:
 
+            # Append a '(1)' to the end of the filename
+            dst = dst.sibling(f'{dst.name()} (1).{dst.ext()}')
+
+    # Output the destination path
     return dst
 
-for i in relscan(SRC, DST):
+#
+for i in relscan(src=SRC, dst=DST):
 
-    src = i['src']
+    src: Path = i['src']
     
-    dst = get_dst(i['src'], i['dst'])
+    dst: None | Path = get_dst(src=i['src'], dst=i['dst'])
 
-    print()
-
+    #
     if dst:
 
+        print()
         print(f'{src=}')
         print(f'{dst=}')
+        print()
 
-        src.copy(dst)
+        #
+        try:
+            src.copy(dst)
+        except OSError as e:
+            warn(e)
 
+    #
     else:
 
         print(src)
